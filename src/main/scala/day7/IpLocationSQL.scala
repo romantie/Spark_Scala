@@ -18,6 +18,7 @@ object IpLocationSQL {
       .appName("ipsql")
       .getOrCreate()
     //读取到文件中的ip规则
+    //F:\IDEA\maven_workplace\Spark\ip
     import spark.implicits._
     val rulesLines: Dataset[String] =spark.read.textFile(args(0))
     //整理规则
