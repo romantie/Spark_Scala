@@ -8,6 +8,7 @@ object DataFrames {
       .appName("sparkSql")
       .master("local[2]")
       .getOrCreate()
+
     val df = spark.read.json(args(0))
     //df.show()
     //df.printSchema()
