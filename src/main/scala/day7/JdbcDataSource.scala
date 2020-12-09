@@ -1,7 +1,5 @@
 package day7
 
-import java.util.Properties
-
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 /**
@@ -33,11 +31,14 @@ object JdbcDataSource {
 
     val result = ages.select($"id",$"name",$"age"*10 as "age")
     //将年龄乘10并保存到新的数据库中
-    val props = new Properties()
-    props.put("user","root")
-    props.put("password","root")
-    result.write.mode("ignore").jdbc("jdbc:mysql://localhost/bigdata","people2",props)
-    result.show()
+//    val props = new Properties()
+//    props.put("user","root")
+//    props.put("password","root")
+//    result.write.mode("ignore").jdbc("jdbc:mysql://localhost/bigdata","people2",props)
+//    result.show()
+
+    result.write.json("F:\\IDEA\\maven_workplace\\Spark\\json")
+    result.write.csv("F:\\IDEA\\maven_workplace\\Spark\\csv")
 
     spark.close()
   }
