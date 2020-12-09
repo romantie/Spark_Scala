@@ -12,7 +12,6 @@ object JsonDataSource {
       .appName("jsonDaaSource")
       .master("local[3]")
       .getOrCreate()
-
     import spark.implicits._
     val jsons: DataFrame = spark.read.json("F:\\IDEA\\maven_workplace\\Spark\\json")
     val filtered = jsons.where($"age" <= 400)
