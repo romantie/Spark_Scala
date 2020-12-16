@@ -1,0 +1,86 @@
+/*hive中创建数据库来保存不同的数据*/
+/*1.原始日志数据0对应的数据库*/
+create database if not exists ods_didi;
+create database if not exists dw_didi;
+create database if not exists app_didi;
+
+/*2.在ods_didi中创建用户打车订单表*/
+create table if not exists ods_didi.t_user_order(
+    orderid string comment '订单id',
+    telephone string comment '打车用户手机',
+    long string comment '用户发起打车的经度',
+    lat string comment '用户发起打车的纬度',
+    province string comment '所在省份',
+    city string comment '所在城市',
+    es_money double comment '预估打车费用',
+    gender string comment '用户信息 - 性别',
+    profession string comment '用户信息 - 行业',
+    age_range string comment '年龄段（70后、80后、...）',
+    tip double comment '小费',
+    subscribe integer comment '是否预约（0 - 非预约、1 - 预约）',
+    sub_time string comment '预约时间',
+    is_agent integer comment '是否代叫（0 - 本人、1 - 代叫）',
+    agent_telephone string comment '预约人手机',
+    order_time string comment '订单时间'
+)
+partitioned by(dt string comment '按照年月日，按照天来区分')
+row format delimited fields terminated by ',';
+/*取消订单表*/
+create table if not exists ods_didi.t_user_cancel_order(
+   orderId string comment '订单ID',
+   cstm_telephone string comment '客户联系电话',
+   lng string comment '取消订单的经度',
+   lat string comment '取消订单的纬度',
+   province string comment '所在省份',
+   city string comment '所在城市',
+   es_distance double comment '预估距离',
+   gender string comment '性别',
+   profession string comment '行业',
+   age_range string comment '年龄段',
+   reason integer comment '取消订单原因（1 - 选择了其他交通方式、2 - 与司机达成一致，取消订单、3 - 投诉司机没来接我、4 - 已不需要用车、5 - 无理由取消订单）',
+   cancel_time string comment '取消时间'
+)
+partitioned by (dt string comment '时间分区')
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ;
+/*支付订单表*/
+create table if not exists ods_didi.t_user_pay_order(
+    id string comment '支付订单 ID',
+    orderId string comment '订单 ID',
+    lng string comment '目的地的经度（支付地址）',
+    lat string comment '目的地的纬度（支付地址）',
+    province string comment '省份',
+    city string comment '城市',
+    total_money double comment '车费总价',
+    real_pay_money double comment '实际支付总额',
+    passenger_additional_money double comment '乘客额外加价',
+    base_money double comment '车费合计',
+    has_coupon integer comment '是否使用优惠券（0 - 不使用、1 - 使用）',
+    coupon_total double comment '优惠券合计',
+    pay_way integer comment '支付方式（0 - 微信支付、1 - 支付宝支付、3 - QQ 钱包支付、4 - 一网通银行卡支付）',
+    mileage double comment '里程（单位公里）',
+    pay_time string comment '支付时间'
+)
+    partitioned by (dt string comment '时间分区')
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ;
+/*用户评价表*/
+create table if not exists ods_didi.t_user_evaluate(
+    id string comment '评价日志唯一id',
+    orderId string comment '订单id',
+    passenger_telephone string comment '用户电话',
+    passenger_province string comment '用户所在省份',
+    passenger_city string comment '用户所在城市',
+    eval_level integer comment '评价等级（1-一颗星，5-五颗星）',
+    eva_time string comment '评价时间'
+)
+partitioned by (dt string comment '时间分区')
+row format delimited fields terminated by ',';
+
+/*2.创建分区*/
+-- 在订单表中创建 2020-04-12 分区
+alter table ods_didi.t_user_order add if not exists partition(dt='2020-12-15');
+-- 在取消订单表中创建 2020-04-12 分区
+alter table ods_didi.t_user_cancel_order add if not exists partition(dt='2020-12-15');
+-- 在支付表中创建 2020-04-12 分区
+alter table ods_didi.t_user_pay_order add if not exists partition(dt='2020-12-15');
+-- 在用户评价订单表创建 2020-04-12 分区
+alter table ods_didi.t_user_evaluate add if not exists partition(dt='2020-12-15');
