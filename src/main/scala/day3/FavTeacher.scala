@@ -17,7 +17,7 @@ object FavTeacher {
 
     //整理数据
     val teacherAndOne = lines.map(line =>{
-
+      line.split("/")(3)
       val teacher = line.split("/")(3)
       (teacher,1)
     })
